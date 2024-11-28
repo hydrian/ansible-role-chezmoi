@@ -1,0 +1,24 @@
+---
+- name: "Installing RPM package from github"
+  ansible.builtin.yum:
+    name:
+      - "git"
+      - "gnupg" 
+      - "https://github.com/twpayne/chezmoi/releases/download/v{{ chezmoi_version}}/chezmoi_{{ chezmoi_version }}_linux_{{ ansible_architecture }}.rpm"
+  when: ansible_facts['os_family'] == "RedHat"
+- name: "Installing chezmoi dependancy packages"
+  ansible.builtin.apt:
+    pkg:
+      - "git"
+      - "gnupg"
+  when: ansible_facts['os_family'] == "Debian"
+- name: "Getting Debian architecture"
+  ansible.builtin.command:
+    cmd: "dpkg --print-architecture"
+  register: debian_arch
+  changed_when: false
+- name: "Installing deb package from github"
+  ansible.builtin.apt:
+    deb: "https://github.com/twpayne/chezmoi/releases/download/v{{ chezmoi_version}}/chezmoi_{{ chezmoi_version }}_linux_{{ debian_arch.stdout }}.deb"
+    allow_downgrade : true
+  when: ansible_facts['os_family'] == 'Debian'
