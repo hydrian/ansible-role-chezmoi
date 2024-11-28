@@ -1,0 +1,22 @@
+---
+- name: "Uninstall chezmoi RPM package"
+  ansible.builtin.yum:
+    name:
+      - "chezmoi"
+    state: 'absent'
+  when: 
+    - ansible_facts['os_family'] == "RedHat"
+    - install_type == 'native'
+- name: "Uninstalling chezmoi apt package"
+  ansible.builtin.apt:
+    pkg: 'chezmoi'
+    state: 'absent'
+  when: 
+    - ansible_facts['os_family'] == 'Debian'
+    - install_type == 'native'
+- name: "Uninstallng chezmoi appimage"
+  ansible.builtin.file:
+    path: "{{ chezmoi_appimage_file }}"
+    state: 'absent'
+  when:
+    - install_type == "appimage"

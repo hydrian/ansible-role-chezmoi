@@ -1,9 +1,21 @@
 ---
+- name: "Unstalling chezmoi"
+  ansible.builtin.include_tasks:
+    file: "uninstall.yml"
+  when:
+    - install_mode == 'uninstall' 
 - name: "Getting package information"
   ansible.builtin.package_facts:
+  when:  install_type == 'native' 
 - name: "Is the correct chezmoi version installed?"
   ansible.builtin.include_tasks: 
     file: "install.yml"
-  when: "( chezmoi_force == true ) or ( ansible_facts.packages.chezmoi|d('') == '' ) or ( correct_version )"
+  when: >-
+    ( install_mode == 'install' ) and
+    (
+      ( chezmoi_force == true ) or 
+      ( ansible_facts.packages.chezmoi|d('') == '' ) or 
+      ( correct_version )
+    )
   vars:
     correct_version: "{{ ansible_facts.packages.chezmoi[0].version is version_compare(chezmoi_version,'!=') }}" 

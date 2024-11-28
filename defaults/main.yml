@@ -1,2 +1,5 @@
 ---
 chezmoi_force: false
+install_type: 'native'
+install_mode: 'install'
+chezmoi_appimage_file: '/usr/local/bin/chezmoi'
